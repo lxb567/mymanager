@@ -10,17 +10,17 @@
     :collapse="isCollapse"
   >
     <h3>{{isCollapse ? '西笔':'西笔后台管理系统'}}</h3>
-    <el-menu-item :index="item.path" v-for="item in noChildren" :key="item.path" @click="clickMenu(item)">
+    <el-menu-item :index="item.path+''" v-for="(item) in noChildren" :key="item.path" @click="clickMenu(item)">
       <i :class="'el-icon-'+ item.icon"></i>
       <span slot="title">{{item.label}}</span>
     </el-menu-item>
-    <el-submenu v-for="item in hasChildren" :index="item.path" :key="item.path">
+    <el-submenu v-for="item in hasChildren" :index="item.path+''" :key="item.path">
       <template slot="title">
         <i :class="'el-icon-' + item.icon"></i>
         <span slot="title">{{item.label}}</span>
       </template>
       <el-menu-item-group v-for="(subItem,subIndex) in item.children" :key="subItem.path">
-        <el-menu-item :index="subIndex">{{subItem.label}}</el-menu-item>
+        <el-menu-item :index="subIndex+''" @click="clickMenu(subItem)">{{subItem.label}}</el-menu-item>
       </el-menu-item-group>
     </el-submenu>
   </el-menu>
@@ -46,49 +46,7 @@
 export default {
   data() {
     return {
-      menu: [
-        {
-          path: '/',
-          name: 'home',
-          label: '首页',
-          icon: 's-home',
-          url: 'Home/Home'
-        },
-        {
-          path: '/mall',
-          name: 'mall',
-          label: '商品管理',
-          icon: 'video-play',
-          url: 'MallManage/MallManage'
-        },
-        {
-          path: '/user',
-          name: 'user',
-          label: '用户管理',
-          icon: 'user',
-          url: 'UserManage/UserManage'
-        },
-        {
-          label: '其他',
-          icon: 'location',
-          children: [
-            {
-              path: '/page1',
-              name: 'page1',
-              label: '页面1',
-              icon: 'setting',
-              url: 'Other/PageOne'
-            },
-            {
-              path: '/page2',
-              name: 'page2',
-              label: '页面2',
-              icon: 'setting',
-              url: 'Other/PageTwo'
-            },
-          ]
-        }
-      ]
+      menu: []
     };
   },
   methods: {
@@ -99,20 +57,29 @@ export default {
       console.log(key, keyPath);
     },
     clickMenu(item){
+      
+      if(this.$route.name === item.name){
+        return;
+      }
       this.$router.push({
         name: item.name
       })
+      //面包屑
+      this.$store.commit('selectMenu',item)
     }
   },
   computed: {
     noChildren() {
-      return this.menu.filter(item => !item.children)
+      return this.asyncMenu.filter(item => !item.children)
     },
     hasChildren() {
-      return this.menu.filter(item => item.children)
+      return this.asyncMenu.filter(item => item.children)
     },
     isCollapse() {
       return this.$store.state.tab.isCollapse
+    },
+    asyncMenu(){
+      return this.$store.state.tab.menu
     }
   }
 };

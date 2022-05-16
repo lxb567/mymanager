@@ -9,18 +9,14 @@ const routes = [
         name: 'Main',
         component: () => import('../views/Main.vue'),
         children: [
-            {
-                path: '/home',
-                name: 'home',
-                component: () => import('../views/home')
-            },
-            {
-                path: '/user',
-                name: 'user',
-                component: () => import('../views/user')
-            }
+            
         ]
     },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('../views/Login/login.vue')
+    }
 ]
 
 const router = new VueRouter({
